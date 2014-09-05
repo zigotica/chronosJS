@@ -18,7 +18,7 @@ ChronosJS is a simple, generic, uncoupled undo/redo manager for web apps (not ti
 
     We could/should add them using JS, but decided to keep the script at its simplest.
 
-2. (Optionally) modify undo/redo ID's in your HTML then also in chronos.js file: defaults at export.rb file:  
+2. (Optionally) modify undo/redo ID's in your HTML then also in chronos.js file:  
 
         Chronos = {
     		…
