@@ -16,6 +16,7 @@ Chronos = {
 
     init : function(){
         $.subscribe("save.chronostate", this.save);
+        $.subscribe("discard.chronostate", this.discard);
     },
 
     save : function( e, what ){
@@ -25,7 +26,6 @@ Chronos = {
             content = what.content;
         
         // console.log("PUBSUB SYSTEM - SAVE NEW CHRONO STATE", title);
-        
         if(ns.current > -1 && ns.current < ns.states.length - 1) {
             // discard rest since we are rewriting the history from the middle
             ns.states = ns.states.slice( 0, ns.current + 1);
@@ -38,15 +38,22 @@ Chronos = {
         ns.updateButtons();
     },
 
+    discard : function(e, what){
+        // e not used, needed as per "jQuery Tiny Pub/Sub" requirement
+        var ns      = Chronos,
+            title   = what.title,
+            content = what.content;
+
+        // console.log("PUBSUB SYSTEM - DISCARD LAST CHRONO STATE", title);
+        ns.states[ns.current] = {"id": ns.current, "title": title, "content": content };
+    },
+
     undo : function(){
         // enabled/disable logic at updateButtons()
         this.current --;
 
         // rewrite from states array
         this.rewrite();
-
-        // update button states
-        this.updateButtons();
     },
 
     redo : function(){
@@ -55,13 +62,13 @@ Chronos = {
 
         // rewrite from states array
         this.rewrite();
-
-        // update button states
-        this.updateButtons();
     },
 
     rewrite : function(){
-        $.publish("load.chronostate", this.states[this.current]);
+        $.publish("rewrite.chronostate", this.states[this.current]);
+
+        // update button states
+        this.updateButtons();
     },
 
     updateButtons : function(){

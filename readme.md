@@ -35,6 +35,8 @@ ChronosJS is a simple, generic, uncoupled undo/redo manager for web apps (not ti
 
 4. Chronos initializes itself, you just need to define two channels: what to do when something is "saved" as a state, and what to do when something is "loaded" from saved states. 
 
+5. (Optionally) add a third channel to discard last saved state, which saves content over its last item.
+
 ## "save" channel
 
 When `Chronos.init()` runs (it executes automatically) it basically sets up **Chronos to LISTEN for your app** to send messages to Chronos states array. You basically need to define what these messages are **in your app module**. Typically you will send object properties previously converted to string with JSON.stringify… For instance, define:
@@ -63,6 +65,18 @@ This piece of code in your app subscribes to channel `load.chronostate`. **User 
             // do what you want here to handle this state, render a view, …
             // console.log("PUBSUB SYSTEM - LOAD FROM CHRONO STATE", JSON.title, JSON.content);
         }
+
+
+## "discard" channel
+
+There are cases we will want to override last saved item, that is, discarding last item saving on top of that. To that end we have another channel named "discard", that initializes automatically on `Chronos.init()`. As in the `save` channel, you basically need to define what these messages are **in your app module**, for instance, define:
+
+        $.publish("discard.chronostate", {
+            "title": "other action", 
+            "content": "this overrides my last state"
+        }); 
+
+As you can see, **you decide when to discard a state**, Chronos will listen to it, and will handle an internal callback to modify Chronos states array. You should not need to modify that callback nor the logic behind it. 
 
 
 ## Status
